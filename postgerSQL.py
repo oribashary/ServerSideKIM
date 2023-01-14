@@ -1,8 +1,8 @@
-import psycopg2
+import sqlalchemy
 from flask import Flask, request, jsonify, make_response
 
 connection_string = "postgres://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com/keepinminddb"
-connection = psycopg2.connect(connection_string)
+connection = sqlalchemy.connect(connection_string)
 
 cursor = connection.cursor()
 
@@ -26,7 +26,7 @@ def add_score():
     except KeyError:
         return make_response("Error: request data is missing required keys (username, score)", 400)
 
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 @app.route("/scores", methods=["GET"])
@@ -36,7 +36,7 @@ def get_scores():
         scores = cursor.fetchall()
 
         return jsonify(scores)
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 @app.route("/scores/<int:account_id>", methods=["GET"])
@@ -47,7 +47,7 @@ def get_score(account_id):
         if not score:
             return make_response("Error: Score not found", 404)
         return jsonify(score)
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 
@@ -67,7 +67,7 @@ def add_account():
         return "Account added successfully"
     except KeyError:
         return make_response("Error: request data is missing required keys (username, password)", 400)
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 @app.route("/accounts", methods=["GET"])
@@ -77,7 +77,7 @@ def get_accounts():
         accounts = cursor.fetchall()
 
         return jsonify(accounts)
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 @app.route("/accounts/<int:account_id>", methods=["GET"])
@@ -88,5 +88,5 @@ def get_account(account_id):
         if not account:
             return make_response("Error: Account not found", 404)
         return jsonify(account)
-    except psycopg2.Error as e:
+    except sqlalchemy.Error as e:
         return make_response("Error: {}".format(e), 500)
