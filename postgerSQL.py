@@ -1,7 +1,7 @@
 import psycopg2
 from flask import Flask, request, jsonify, make_response
 
-connection_string = "postgresql:///keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com/keepinminddb"
+connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 
 connection = psycopg2.connect(connection_string)
 
