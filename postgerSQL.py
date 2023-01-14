@@ -2,7 +2,9 @@ import sqlalchemy
 from flask import Flask, request, jsonify, make_response
 
 connection_string = "postgres://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com/keepinminddb"
-connection = sqlalchemy.connect(connection_string)
+engine = sqlalchemy.create_engine(connection_string)
+
+connection = engine.connect()
 
 cursor = connection.cursor()
 
