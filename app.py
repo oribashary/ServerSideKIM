@@ -36,7 +36,7 @@ def get_scores():
         cursor.execute("SELECT * FROM scores")
         scores = cursor.fetchall()
 
-        return jsonify(scores)
+        return jsonify(scores), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
@@ -47,7 +47,7 @@ def get_score(account_id):
         score = cursor.fetchone()
         if not score:
             return make_response("Error: Score not found", 404)
-        return jsonify(score)
+        return jsonify(score), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
@@ -71,13 +71,13 @@ def add_account():
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-@app.route("/accounts", methods=["GET"])
+@app.route("/accounts", methods=["GET"]
 def get_accounts():
     try:
         cursor.execute("SELECT * FROM accounts")
         accounts = cursor.fetchall()
 
-        return jsonify(accounts)
+        return jsonify(accounts), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
@@ -88,6 +88,6 @@ def get_account(account_id):
         account = cursor.fetchone()
         if not account:
             return make_response("Error: Account not found", 404)
-        return jsonify(account)
+        return jsonify(account), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
