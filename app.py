@@ -71,7 +71,7 @@ def add_account():
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-@app.route("/accounts", methods=["GET"]
+@app.route("/accounts", methods=["GET"])
 def get_accounts():
     try:
         cursor.execute("SELECT * FROM accounts")
