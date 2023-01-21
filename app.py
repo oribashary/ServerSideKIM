@@ -34,23 +34,33 @@ def add_score():
 def get_scores():
     try:
         cursor.execute("SELECT * FROM scores")
-        scores = cursor.fetchall()
-
-        return jsonify(scores), 200, {'Content-Type': 'application/json'}
+        scores_list = cursor.fetchall()
+        scores = []
+        for score in scores_list:
+            scores.append({
+                "id": score[0],
+                "username": score[1],
+                "score": score[2]
+            })
+        return jsonify({"scores": scores}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-@app.route("/scores/<int:account_id>", methods=["GET"])
-def get_score(account_id):
+@app.route("/scores/<int:score_id>", methods=["GET"])
+def get_score(score_id):
     try:
-        cursor.execute("SELECT score FROM scores WHERE account_id = %s", (account_id,))
-        score = cursor.fetchone()
+        cursor.execute("SELECT * FROM scores WHERE id = %s", (score_id,))
+        score_list = cursor.fetchone()
+        score = {
+                "id": score_list[0],
+                "username": score_list[1],
+                "score": score_list[2]
+        }
         if not score:
             return make_response("Error: Score not found", 404)
-        return jsonify(score), 200, {'Content-Type': 'application/json'}
+        return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
-
 
 #accounts:
 @app.route("/accounts", methods=["POST"])
@@ -75,19 +85,30 @@ def add_account():
 def get_accounts():
     try:
         cursor.execute("SELECT * FROM accounts")
-        accounts = cursor.fetchall()
-
-        return jsonify(accounts), 200, {'Content-Type': 'application/json'}
+        accounts_list = cursor.fetchall()
+        accounts = []
+        for account in accounts_list:
+            accounts.append({
+                "id": account[0],
+                "username": account[1],
+            })
+        return jsonify({"accounts": accounts}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
+
 
 @app.route("/accounts/<int:account_id>", methods=["GET"])
 def get_account(account_id):
     try:
         cursor.execute("SELECT * FROM accounts WHERE id = %s", (account_id,))
-        account = cursor.fetchone()
+        account_list = cursor.fetchone()
+        account = {
+                "id": account_list[0],
+                "username": account_list[1],
+        }
         if not account:
             return make_response("Error: Account not found", 404)
-        return jsonify(account), 200, {'Content-Type': 'application/json'}
+        return jsonify({"account": account}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
+
