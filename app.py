@@ -106,7 +106,7 @@ def get_scores():
         return make_response("Error: {}".format(e), 500)
 
 #Google API photos
-@app.route('/photos', methods=['POST'])
+@app.route('/photos', methods=['GET'])
 def photos():
     auth_header = request.headers.get('Authorization')
 
