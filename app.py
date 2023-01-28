@@ -29,7 +29,7 @@ def get_response():
         return 'Invalid token', 401
     user_info = json.loads(res.text)
     return UserInfo(user_info['name'], user_info['email'], user_info['given_name'], user_info['family_name'])
-
+'''
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
@@ -74,7 +74,6 @@ def add_score():
 
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
-'''
 
 @app.route("/scores", methods=["GET"])
 def get_score():
