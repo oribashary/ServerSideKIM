@@ -8,7 +8,7 @@ GOOGLE_USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v1/userinfo"
 connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 connection = psycopg2.connect(connection_string)
 cursor = connection.cursor()
-
+'''
 app = Flask(__name__)
 
 class UserInfo:
@@ -29,7 +29,6 @@ def get_response():
         return 'Invalid token', 401
     user_info = json.loads(res.text)
     return UserInfo(user_info['name'], user_info['email'], user_info['given_name'], user_info['family_name'])
-
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
@@ -51,6 +50,7 @@ def google_login():
         return jsonify({"error": f"Error obtaining access token: {e}"}), 500
     except psycopg2.Error as e:
         return jsonify({"error": f"Error inserting data into database: {e}"}), 500
+
 
 #socres:
 @app.route("/scores", methods=["POST"])
@@ -133,3 +133,4 @@ def photos():
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
     return links
+'''
