@@ -75,7 +75,7 @@ def add_score():
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-@app.route("/scores/<int:score_id>", methods=["GET"])
+@app.route("/scores", methods=["GET"])
 def get_score():
     try:
         user_info = get_response()
