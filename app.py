@@ -1,5 +1,6 @@
 import psycopg2
 from flask import Flask, request, jsonify, make_response
+from google.oauth2.credentials import Credentials
 
 connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 
@@ -112,3 +113,10 @@ def get_account(account_id):
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
+
+@app.route('/email', methods=['POST'])
+def email():
+    access_token = request.json.get('access_token')
+    creds = Credentials.from_authorized_user_info(info=access_token)
+    email = creds.id_token["email"]
+    return jsonify(email=email)
