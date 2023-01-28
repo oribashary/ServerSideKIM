@@ -80,7 +80,7 @@ def get_score():
     try:
         user_info = get_response()
 
-        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name))
+        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name,))
 
         score_list = cursor.fetchone()
         score = {
@@ -126,7 +126,7 @@ def photos():
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
     if response.status_code != 200:
         return 'Error connecting to Google Photos API', response.status_code
-        
+
     response_json = response.json()
     if 'mediaItems' not in response_json:
         return 'Error: mediaItems not found in response', response.status_code
