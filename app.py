@@ -134,7 +134,9 @@ def photos():
             }
         }
     }
-    response = requests.request("POST", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
+
+    session = requests.Session()
+    response = session.request("POST", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
     
     if response.status_code != 200:
         return 'Error connecting to Google Photos API', response.status_code
