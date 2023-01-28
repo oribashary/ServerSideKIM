@@ -14,13 +14,13 @@ def get_response():
         return 'Authorization header not found', 401
     token = auth_header.split()[1]
         
-    return requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=token)
+    return requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=token).json()
 
 #socres:
 @app.route("/scores", methods=["POST"])
 def add_score():
     try:
-        user_info = get_response().json()
+        user_info = get_response()
         username = user_info['name']
 
         data = request.get_json()
@@ -42,7 +42,7 @@ def add_score():
 @app.route("/scores/<int:score_id>", methods=["GET"])
 def get_score():
     try:
-        user_info = get_response().json()
+        user_info = get_response()
         username = user_info['name']
 
         cursor.execute("SELECT * FROM scores WHERE username = %s", (username))
@@ -64,7 +64,7 @@ def get_score():
 @app.route("/google_login", methods=["POST"])
 def google_login():
     try:
-        user_info = get_response().json()
+        user_info = get_response()
         
         username = user_info['name']
         email = user_info['email']
@@ -88,6 +88,7 @@ def google_login():
 #Google API photos
 @app.route('/photos', methods=['GET'])
 def photos():
+    
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return 'Authorization header not found', 401
