@@ -63,7 +63,6 @@ def get_score():
         return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
-'''
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
@@ -93,6 +92,7 @@ def google_login():
         return jsonify({"error": f"Error obtaining access token: {e}"}), 500
     except psycopg2.Error as e:
         return jsonify({"error": f"Error inserting data into database: {e}"}), 500
+'''
 #Google API photos
 @app.route('/photos', methods=['GET'])
 def photos():
