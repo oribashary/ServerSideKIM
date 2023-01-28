@@ -73,7 +73,7 @@ def add_score():
         cursor.execute(sql, val)
         connection.commit()
 
-        return "Score added successfully"
+        return jsonify({"message": "Score added successfully"})
         
     except KeyError:
         return make_response("Error: request data is missing required keys (username, score)", 400)
