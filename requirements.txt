@@ -2,4 +2,4 @@ Flask
 Gunicorn
 sqlalchemy
 psycopg2
-Credentials
+google-auth
