@@ -4,10 +4,11 @@ import requests
 import json
 
 GOOGLE_USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v1/userinfo"
+POSTGRESQL_CONNECTION_STRING = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 
-connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
-connection = psycopg2.connect(connection_string)
+connection = psycopg2.connect(POSTGRESQL_CONNECTION_STRING)
 cursor = connection.cursor()
+
 app = Flask(__name__)
 
 class UserInfo:
@@ -19,15 +20,20 @@ class UserInfo:
 
 def get_response():
     auth_header = request.headers.get('Authorization')
+
     if not auth_header:
         return 'Authorization header not found', 401
+
     token = auth_header.split()[1]
     session = requests.Session()
     res = session.get(GOOGLE_USERINFO_ENDPOINT, headers={'Authorization': f"Bearer {token}"})
+
     if res.status_code != 200:
         return 'Invalid token', 401
+
     user_info = json.loads(res.text)
     return UserInfo(user_info['name'], user_info['email'], user_info['given_name'], user_info['family_name'])
+
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
@@ -36,6 +42,7 @@ def google_login():
 
         cursor.execute("SELECT * FROM accounts WHERE email = %s", (user_info.email,))
         account = cursor.fetchone()
+
         if account:
             return jsonify({"message": "Welcome back"})
 
@@ -43,6 +50,7 @@ def google_login():
         connection.commit()
 
         return jsonify({"message": "Account created successfully"})
+
     except KeyError as e:
         return jsonify({"error": f"Missing required key in request data: {e}"}), 400
     except requests.exceptions.RequestException as e:
@@ -88,6 +96,7 @@ def get_score():
 
         if not score:
             return make_response("Error: Score not found", 404)
+
         return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
@@ -96,8 +105,10 @@ def get_score():
 @app.route('/photos', methods=['GET'])
 def photos():
     auth_header = request.headers.get('Authorization')
+
     if not auth_header:
         return 'Authorization header not found', 401
+
     token = auth_header.split()[1]
 
     url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
@@ -119,12 +130,13 @@ def photos():
             }
         }
     }
-
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
+    
     if response.status_code != 200:
         return 'Error connecting to Google Photos API', response.status_code
 
     response_json = response.json()
+    
     if 'mediaItems' not in response_json:
         return 'Error: mediaItems not found in response', response.status_code
 
