@@ -25,7 +25,7 @@ def get_response():
 def add_score():
     try:
         user_info = get_response()
-        
+
         username = ( user_info['name'])
 
         data = request.get_json()
