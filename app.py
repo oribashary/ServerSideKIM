@@ -80,3 +80,71 @@ def add_score():
 
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
+
+@app.route("/scores", methods=["GET"])
+def get_score():
+    try:
+        user_info = get_response()
+
+        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name,))
+        score_list = cursor.fetchone()
+
+        if not score_list:
+            return make_response("Error: score_list not found", 404)
+
+        score = {
+                "id": score_list[0],
+                "username": score_list[1],
+                "score": score_list[2]
+        }
+
+        if not score:
+            return make_response("Error: Score not found", 404)
+
+        return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
+    except psycopg2.Error as e:
+        return make_response("Error: {}".format(e), 500)
+
+#Google API photos
+@app.route('/photos', methods=['GET'])
+def photos():
+    auth_header = request.headers.get('Authorization')
+
+    if not auth_header:
+        return 'Authorization header not found', 401
+
+    token = auth_header.split()[1]
+
+    url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
+
+    payload = {
+    "filters": {
+        "contentFilter": {
+            "includedContentCategories": [
+                "BIRTHDAYS",
+                "ANIMALS",
+                "SELFIES",
+                "PETS"
+            ]
+        },
+        "mediaTypeFilter": {
+            "contentTypes": [
+                "PHOTO"
+                ]
+            }
+        }
+    }
+    response = requests.request("POST", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
+    
+    if response.status_code != 200:
+        return 'Error connecting to Google Photos API', response.status_code
+
+    response_json = response.json()
+    
+    if 'mediaItems' not in response_json:
+        return 'Error: mediaItems not found in response', response.status_code
+
+    links = []
+    for item in response_json['mediaItems']:
+        links.append(item['productUrl'])
+    return links
