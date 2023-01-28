@@ -1,11 +1,9 @@
 import psycopg2
 from flask import Flask, request, jsonify, make_response
-from google.oauth2.credentials import Credentials
+import requests
 
 connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
-
 connection = psycopg2.connect(connection_string)
-
 cursor = connection.cursor()
 
 app = Flask(__name__)
@@ -14,8 +12,15 @@ app = Flask(__name__)
 @app.route("/scores", methods=["POST"])
 def add_score():
     try:
+        headers = {
+        'Authorization': request.headers.get('Authorization')
+        }
+        
+        response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=headers)
+        user_info = response.json()
+        username = user_info['name']
+
         data = request.get_json()
-        username = data["username"]
         score = data["score"]
 
         sql = "INSERT INTO scores (username, score) VALUES (%s, %s)"
@@ -31,32 +36,26 @@ def add_score():
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-@app.route("/scores", methods=["GET"])
-def get_scores():
-    try:
-        cursor.execute("SELECT * FROM scores")
-        scores_list = cursor.fetchall()
-        scores = []
-        for score in scores_list:
-            scores.append({
-                "id": score[0],
-                "username": score[1],
-                "score": score[2]
-            })
-        return jsonify({"scores": scores}), 200, {'Content-Type': 'application/json'}
-    except psycopg2.Error as e:
-        return make_response("Error: {}".format(e), 500)
-
 @app.route("/scores/<int:score_id>", methods=["GET"])
-def get_score(score_id):
+def get_score():
     try:
-        cursor.execute("SELECT * FROM scores WHERE id = %s", (score_id,))
+        headers = {
+        'Authorization': request.headers.get('Authorization')
+        }
+        
+        response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=headers)
+        user_info = response.json()
+        username = user_info['name']
+
+        cursor.execute("SELECT * FROM scores WHERE username = %s", (username))
+
         score_list = cursor.fetchone()
         score = {
                 "id": score_list[0],
                 "username": score_list[1],
                 "score": score_list[2]
         }
+
         if not score:
             return make_response("Error: Score not found", 404)
         return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
@@ -64,59 +63,43 @@ def get_score(score_id):
         return make_response("Error: {}".format(e), 500)
 
 #accounts:
-@app.route("/accounts", methods=["POST"])
-def add_account():
+@app.route("/google_login", methods=["POST"])
+def google_login():
     try:
-        data = request.get_json()
-        username = data["username"]
-        password = data["password"]
+        headers = {
+        'Authorization': request.headers.get('Authorization')
+        }
 
-        sql = "INSERT INTO accounts (username, password) VALUES (%s, %s)"
-        val = (username, password)
-        cursor.execute(sql, val)
+        response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=headers)
+        user_info = response.json()
+
+        username = user_info['name']
+        email = user_info['email']
+        given_name = user_info['given_name']
+        family_name = user_info['family_name']
+
+        sql = ("INSERT INTO accounts (username, email, given_name, family_name) VALUES (%s, %s, %s, %s)")
+        val = (username, email, given_name, family_name)
+
+        cursor.execute(sql,val)
         connection.commit()
 
-        return "Account added successfully"
-    except KeyError:
-        return make_response("Error: request data is missing required keys (username, password)", 400)
+        return jsonify({"message": "Account created successfully"})
+    except KeyError as e:
+        return jsonify({"error": f"Missing required key in request data: {e}"}), 400
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Error obtaining access token: {e}"}), 500
     except psycopg2.Error as e:
-        return make_response("Error: {}".format(e), 500)
+        return jsonify({"error": f"Error inserting data into database: {e}"}), 500
 
-@app.route("/accounts", methods=["GET"])
-def get_accounts():
-    try:
-        cursor.execute("SELECT * FROM accounts")
-        accounts_list = cursor.fetchall()
-        accounts = []
-        for account in accounts_list:
-            accounts.append({
-                "id": account[0],
-                "username": account[1],
-            })
-        return jsonify({"accounts": accounts}), 200, {'Content-Type': 'application/json'}
-    except psycopg2.Error as e:
-        return make_response("Error: {}".format(e), 500)
+#Google API photos
+@app.route('/photos', methods=['GET'])
+def photos():
+    url = "https://photoslibrary.googleapis.com/v1/mediaItems"
 
+    headers = {
+        'Authorization': request.headers.get('Authorization')
+    }
 
-@app.route("/accounts/<int:account_id>", methods=["GET"])
-def get_account(account_id):
-    try:
-        cursor.execute("SELECT * FROM accounts WHERE id = %s", (account_id,))
-        account_list = cursor.fetchone()
-        account = {
-                "id": account_list[0],
-                "username": account_list[1],
-        }
-        if not account:
-            return make_response("Error: Account not found", 404)
-        return jsonify({"account": account}), 200, {'Content-Type': 'application/json'}
-    except psycopg2.Error as e:
-        return make_response("Error: {}".format(e), 500)
-
-
-@app.route('/email', methods=['POST'])
-def email():
-    access_token = request.json.get('access_token')
-    creds = Credentials.from_authorized_user_info(info=access_token)
-    email = creds.id_token["email"]
-    return jsonify(email=email)
+    response = requests.request("GET", url, headers=headers)
+    return  jsonify(response.json())
