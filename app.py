@@ -118,7 +118,7 @@ def photos():
     url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
 
     payload = {
-        "pageSize": "4",
+        "pageSize": "6",
         "filters": {
             "contentFilter": {
                 "includedContentCategories": [
