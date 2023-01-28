@@ -95,8 +95,6 @@ def get_scores():
         scores = []
         for score in score_list:
             score_obj = {
-                "id": score[0],
-                "username": score[1],
                 "score": score[2]
             }
             scores.append(score_obj)
