@@ -88,7 +88,6 @@ def google_login():
 #Google API photos
 @app.route('/photos', methods=['GET'])
 def photos():
-    
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return 'Authorization header not found', 401
@@ -96,5 +95,5 @@ def photos():
 
     url = "https://photoslibrary.googleapis.com/v1/mediaItems"
 
-    response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"})
-    return  jsonify(response.json())
+    response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}).json()
+    return  jsonify(response)
