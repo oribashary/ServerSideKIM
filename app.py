@@ -93,7 +93,7 @@ def google_login():
         return jsonify({"error": f"Error obtaining access token: {e}"}), 500
     except psycopg2.Error as e:
         return jsonify({"error": f"Error inserting data into database: {e}"}), 500
-
+'''
 #Google API photos
 @app.route('/photos', methods=['GET'])
 def photos():
@@ -123,3 +123,4 @@ def photos():
     }
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload).json()
     return jsonify(response)
+    '''
