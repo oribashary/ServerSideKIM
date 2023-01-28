@@ -29,6 +29,7 @@ def get_response():
         return 'Invalid token', 401
     user_info = json.loads(res.text)
     return UserInfo(user_info['name'], user_info['email'], user_info['given_name'], user_info['family_name'])
+
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
@@ -50,7 +51,6 @@ def google_login():
         return jsonify({"error": f"Error obtaining access token: {e}"}), 500
     except psycopg2.Error as e:
         return jsonify({"error": f"Error inserting data into database: {e}"}), 500
-
 
 #socres:
 @app.route("/scores", methods=["POST"])
