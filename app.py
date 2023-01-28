@@ -95,7 +95,6 @@ def get_score():
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
-'''
 #Google API photos
 @app.route('/photos', methods=['GET'])
 def photos():
@@ -136,3 +135,4 @@ def photos():
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
     return links
+'''
