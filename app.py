@@ -1,4 +1,3 @@
-'''
 import psycopg2
 from flask import Flask, request, jsonify, make_response
 import requests
@@ -133,4 +132,3 @@ def photos():
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
     return links
-'''
