@@ -124,7 +124,13 @@ def photos():
     }
 
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
+    if response.status_code != 200:
+        return 'Error connecting to Google Photos API', response.status_code
+        
     response_json = response.json()
+    if 'mediaItems' not in response_json:
+        return 'Error: mediaItems not found in response', response.status_code
+
     links = []
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
