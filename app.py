@@ -10,7 +10,6 @@ connection = psycopg2.connect(connection_string)
 cursor = connection.cursor()
 
 app = Flask(__name__)
-'''
 
 class UserInfo:
     def __init__(self, name, email, given_name, family_name):
@@ -134,4 +133,3 @@ def photos():
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
     return links
-'''
