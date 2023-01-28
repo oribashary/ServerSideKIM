@@ -13,8 +13,11 @@ def get_response():
     if not auth_header:
         return 'Authorization header not found', 401
     token = auth_header.split()[1]
-    
-    return requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={'Authorization': f"Bearer {token}"}).json()
+    res = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={'Authorization': f"Bearer {token}"})
+    if res.status_code != 200:
+        return 'Invalid token', 401
+    return res.json()
+
 
 #socres:
 @app.route("/scores", methods=["POST"])
