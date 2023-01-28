@@ -2,4 +2,4 @@ Flask
 Gunicorn
 sqlalchemy
 psycopg2
-google-auth
+requests
