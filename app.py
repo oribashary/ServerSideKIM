@@ -118,7 +118,7 @@ def photos():
     url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
 
     payload = {
-        "pageSize": "100",
+        "pageSize": "4",
         "filters": {
             "contentFilter": {
                 "includedContentCategories": [
@@ -148,5 +148,5 @@ def photos():
 
     links = []
     for item in response_json['mediaItems']:
-        links.append(item['productUrl'])
+        links.append(item['baseUrl'])
     return jsonify(links)
