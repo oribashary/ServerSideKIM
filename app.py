@@ -13,8 +13,8 @@ def get_response():
     if not auth_header:
         return 'Authorization header not found', 401
     token = auth_header.split()[1]
-        
-    return requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=token).json()
+    
+    return requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={'Authorization': f"Bearer {token}"}).json()
 
 #socres:
 @app.route("/scores", methods=["POST"])
@@ -96,5 +96,5 @@ def photos():
 
     url = "https://photoslibrary.googleapis.com/v1/mediaItems"
 
-    response = requests.request("GET", url, headers=token)
+    response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"})
     return  jsonify(response.json())
