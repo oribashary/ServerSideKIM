@@ -10,6 +10,7 @@ connection = psycopg2.connect(connection_string)
 cursor = connection.cursor()
 
 app = Flask(__name__)
+'''
 
 class UserInfo:
     def __init__(self, name, email, given_name, family_name):
@@ -29,7 +30,6 @@ def get_response():
         return 'Invalid token', 401
     user_info = json.loads(res.text)
     return UserInfo(user_info['name'], user_info['email'], user_info['given_name'], user_info['family_name'])
-'''
 #accounts:
 @app.route("/google_login", methods=["POST"])
 def google_login():
