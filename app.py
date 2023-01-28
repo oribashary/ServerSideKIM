@@ -80,23 +80,3 @@ def add_score():
 
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
-
-@app.route("/scores", methods=["GET"])
-def get_score():
-    try:
-        user_info = get_response()
-
-        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name,))
-        score_list = cursor.fetchone()
-        score = {
-                "id": score_list[0],
-                "username": score_list[1],
-                "score": score_list[2]
-        }
-
-        if not score:
-            return make_response("Error: Score not found", 404)
-
-        return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
-    except psycopg2.Error as e:
-        return make_response("Error: {}".format(e), 500)
