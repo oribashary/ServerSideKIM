@@ -74,12 +74,6 @@ def google_login():
         email = user_info['email']
         given_name = user_info['given_name']
         family_name = user_info['family_name']
-
-        cursor.execute("SELECT * FROM accounts WHERE email = %s", (email))
-        account = cursor.fetchone()
-        if account:
-            return jsonify({"message": "Welcome back"})
-
         sql = ("INSERT INTO accounts (username, email, given_name, family_name) VALUES (%s, %s, %s, %s)")
         val = (username, email, given_name, family_name)
 
