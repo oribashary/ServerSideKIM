@@ -63,7 +63,7 @@ def add_score():
         score = data["score"]
 
         sql = "INSERT INTO scores (username, score) VALUES (%s, %s)"
-        val = (user_info.username, score)
+        val = (user_info.name, score)
         cursor.execute(sql, val)
         connection.commit()
 
@@ -80,7 +80,7 @@ def get_score():
     try:
         user_info = get_response()
 
-        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.username))
+        cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name))
 
         score_list = cursor.fetchone()
         score = {
