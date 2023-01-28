@@ -82,31 +82,31 @@ def add_score():
         return make_response("Error: {}".format(e), 500)
 
 @app.route("/scores", methods=["GET"])
-def get_score():
+def get_scores():
     try:
         user_info = get_response()
 
         cursor.execute("SELECT * FROM scores WHERE username = %s", (user_info.name,))
-        score_list = cursor.fetchone()
+        score_list = cursor.fetchall()
 
         if not score_list:
             return make_response("Error: score_list not found", 404)
 
-        score = {
-                "id": score_list[0],
-                "username": score_list[1],
-                "score": score_list[2]
-        }
+        scores = []
+        for score in score_list:
+            score_obj = {
+                "id": score[0],
+                "username": score[1],
+                "score": score[2]
+            }
+            scores.append(score_obj)
 
-        if not score:
-            return make_response("Error: Score not found", 404)
-
-        return jsonify({"score": score}), 200, {'Content-Type': 'application/json'}
+        return jsonify({"scores": scores}), 200, {'Content-Type': 'application/json'}
     except psycopg2.Error as e:
         return make_response("Error: {}".format(e), 500)
 
 #Google API photos
-@app.route('/photos', methods=['GET'])
+@app.route('/photos', methods=['POST'])
 def photos():
     auth_header = request.headers.get('Authorization')
 
