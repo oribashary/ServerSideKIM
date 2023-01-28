@@ -25,7 +25,8 @@ def get_response():
 def add_score():
     try:
         user_info = get_response()
-        username = user_info['name']
+        
+        username = ( user_info['name'])
 
         data = request.get_json()
         score = data["score"]
@@ -69,11 +70,13 @@ def get_score():
 def google_login():
     try:
         user_info = get_response()
-        
-        username = user_info['name']
-        email = user_info['email']
-        given_name = user_info['given_name']
-        family_name = user_info['family_name']
+
+        username, email, given_name, family_name = (
+            user_info['name'],
+            user_info['email'],
+            user_info['given_name'],
+            user_info['family_name']
+        )
 
         cursor.execute("SELECT * FROM accounts WHERE email = %s", (email))
         account = cursor.fetchone()
