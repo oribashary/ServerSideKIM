@@ -1,3 +1,4 @@
+'''
 import psycopg2
 from flask import Flask, request, jsonify, make_response
 import requests
@@ -8,7 +9,6 @@ GOOGLE_USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v1/userinfo"
 connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 connection = psycopg2.connect(connection_string)
 cursor = connection.cursor()
-'''
 app = Flask(__name__)
 
 class UserInfo:
