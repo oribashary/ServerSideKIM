@@ -1,6 +1,7 @@
 import psycopg2
 from flask import Flask, request, jsonify, make_response
 import requests
+import json
 
 connection_string = "postgresql://keepinminddb_user:yrOWdaHiZ0NSbKj5kQ5ARzUtXDiTjWg5@dpg-cf1but94reb5o41og2s0-a.frankfurt-postgres.render.com:5432/keepinminddb"
 connection = psycopg2.connect(connection_string)
@@ -96,7 +97,29 @@ def photos():
         return 'Authorization header not found', 401
     token = auth_header.split()[1]
 
-    url = "https://photoslibrary.googleapis.com/v1/mediaItems"
+    url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
 
-    response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}).json()
+    payload = json.dumps({
+    "pageSize": "100",
+    "filters": 
+    {
+        "contentFilter": 
+        { 
+            "includedContentCategories": 
+            [
+                "BIRTHDAYS", 
+                "ANIMALS", 
+                "SELFIES", 
+                "PETS"
+            ]
+            },
+            "mediaTypeFilter": { 
+                "mediaTypes": 
+                [ 
+                    "PHOTO" 
+                ] 
+            } 
+        } 
+    })
+    response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload).json()
     return  jsonify(response)
