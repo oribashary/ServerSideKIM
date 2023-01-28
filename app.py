@@ -130,4 +130,4 @@ def photos():
         } 
     })
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload).json()
-    return  jsonify(response)
+    return jsonify(response)
