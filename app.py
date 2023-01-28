@@ -122,5 +122,10 @@ def photos():
             }
         }
     }
+
     response = requests.request("GET", url, headers={'Authorization': f"Bearer {token}"}, data=payload)
-    return response
+    response_json = response.json()
+    links = []
+    for item in response_json['mediaItems']:
+        links.append(item['productUrl'])
+    return links
