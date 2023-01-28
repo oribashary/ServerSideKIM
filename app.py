@@ -113,38 +113,40 @@ def photos():
     if not auth_header:
         return 'Authorization header not found', 401
 
+    token = auth_header.split()[1]
+
     url = "https://photoslibrary.googleapis.com/v1/mediaItems:search"
 
-    payload = json.dumps({
-    "pageSize": "100",
-    "filters": {
-        "contentFilter": {
-        "includedContentCategories": [
-            "BIRTHDAYS",
-            "ANIMALS",
-            "SELFIES",
-            "PETS"
-        ]
-        },
-        "mediaTypeFilter": {
-            "mediaTypes": [
-            "PHOTO"
-        ]
+    payload = {
+        "pageSize": "100",
+        "filters": {
+            "contentFilter": {
+                "includedContentCategories": [
+                    "BIRTHDAYS",
+                    "ANIMALS",
+                    "SELFIES",
+                    "PETS"
+                ]
+            },
+            "mediaTypeFilter": {
+                "mediaTypes": [
+                    "PHOTO"
+                ]
+            }
         }
     }
-    })
-    
-    response = requests.request("POST", url, headers=auth_header, data=payload)
-    
+
+    response = requests.request("POST", url, headers={'Authorization': f"Bearer {token}"}, json=payload)
+
     if response.status_code != 200:
         return 'Error connecting to Google Photos API', response.status_code
 
     response_json = response.json()
-    
+
     if 'mediaItems' not in response_json:
         return 'Error: mediaItems not found in response', response.status_code
 
     links = []
     for item in response_json['mediaItems']:
         links.append(item['productUrl'])
-    return links
+    return jsonify(links)
