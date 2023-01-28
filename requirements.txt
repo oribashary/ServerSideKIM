@@ -3,4 +3,3 @@ Gunicorn
 sqlalchemy
 psycopg2
 requests
-json
